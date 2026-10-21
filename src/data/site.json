@@ -1,0 +1,45 @@
+{
+  "name": "Lumen Studio",
+  "tagline": "Websites your marketing team can actually edit.",
+  "announcement": {
+    "enabled": true,
+    "text": "New: our spring launch offer is live — 20% off all plans.",
+    "linkText": "See pricing",
+    "href": "/pricing"
+  },
+  "nav": [
+    { "label": "Home", "href": "/" },
+    { "label": "About", "href": "/about" },
+    { "label": "Pricing", "href": "/pricing" },
+    { "label": "Blog", "href": "/blog" },
+    { "label": "FAQ", "href": "/faq" },
+    { "label": "Contact", "href": "/contact" }
+  ],
+  "hero": {
+    "eyebrow": "Design + content, together",
+    "title": "Build pages in minutes, not sprints",
+    "subtitle": "Lumen gives your team a visual editor, reusable blocks, and one-click publishing on top of a fast Astro site.",
+    "primaryCta": { "label": "Start free trial", "href": "/contact" },
+    "secondaryCta": { "label": "Watch the demo", "action": "open-demo-popup" }
+  },
+  "stats": [
+    { "value": "120+", "label": "Sites launched" },
+    { "value": "4.9/5", "label": "Average rating" },
+    { "value": "38%", "label": "Faster publishing" },
+    { "value": "24/7", "label": "Support" }
+  ],
+  "features": [
+    { "title": "Visual editor", "body": "Click any heading, paragraph or button and change it in place.", "image": "feature-editor", "icon": "✏️" },
+    { "title": "GitHub sync", "body": "Every publish becomes a clean commit in your repository.", "image": "feature-sync", "icon": "🔄" },
+    { "title": "SEO built in", "body": "Meta titles, descriptions, Open Graph images and redirects per page.", "image": "feature-seo", "icon": "🔍" }
+  ],
+  "footer": {
+    "about": "Lumen Studio is a dummy company used to test BetterCMS editing.",
+    "copyright": "© 2026 Lumen Studio. All rights reserved.",
+    "social": [
+      { "label": "X / Twitter", "href": "https://x.com" },
+      { "label": "LinkedIn", "href": "https://linkedin.com" },
+      { "label": "GitHub", "href": "https://github.com" }
+    ]
+  }
+}

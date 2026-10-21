@@ -1,0 +1,52 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2);
+const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<BaseLayout title={post.data.title} description={post.data.description} ogImage={post.data.cover.src}>
+  <article class="section">
+    <header class="container post-header">
+      <a href="/blog">← All posts</a>
+      <h1>{post.data.title}</h1>
+      <p class="meta">
+        By {post.data.author} · {fmt(post.data.pubDate)}
+        {post.data.updatedDate && <> · Updated {fmt(post.data.updatedDate)}</>}
+      </p>
+      <div class="tags">{post.data.tags.map((t) => <span>#{t}</span>)}</div>
+      <Image src={post.data.cover} alt={post.data.coverAlt} widths={[800, 1200]} sizes="(max-width: 900px) 100vw, 900px" />
+    </header>
+
+    {
+      toc.length > 0 && (
+        <nav class="container prose toc" aria-label="Table of contents">
+          <strong>On this page</strong>
+          <ul>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ul>
+        </nav>
+      )
+    }
+
+    <div class="container prose">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header { max-width: 900px; text-align: center; }
+  .post-header h1 { font-size: clamp(2rem, 4vw, 3rem); margin-top: 16px; }
+  .post-header :global(img) { border-radius: var(--radius); margin: 32px 0; }
+  .meta { color: var(--muted); }
+  .tags { display: flex; gap: 8px; justify-content: center; color: var(--brand); }
+  .toc { background: var(--surface); border-radius: var(--radius); padding: 16px 24px; margin-bottom: 32px; }
+</style>

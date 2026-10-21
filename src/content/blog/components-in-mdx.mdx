@@ -1,0 +1,61 @@
+---
+title: 'Components inside MDX: callouts, popups and tooltips'
+description: An MDX post that mixes rich text with Astro components, to test how the editor handles them.
+pubDate: 2026-10-10
+author: Ben Carter
+cover: ../../assets/blog-cover-2.jpg
+coverAlt: Green and blue gradient cover image
+tags: [mdx, components]
+featured: false
+---
+
+import Callout from '../../components/Callout.astro';
+import Modal from '../../components/Modal.astro';
+import Tooltip from '../../components/Tooltip.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
+
+export const version = '2.4';
+
+This is an **MDX** post. Unlike plain Markdown, it can import and render components. The current product version is {version}, which comes from an exported variable.
+
+## Callouts
+
+<Callout type="info" title="Heads up">
+  This text lives **inside a component** in MDX. Can the editor change it?
+</Callout>
+
+<Callout type="warning" title="Careful">
+  Warning callouts use a yellow background.
+</Callout>
+
+<Callout type="success" title="Done">
+  Success callouts have a [link inside](/pricing) them.
+</Callout>
+
+## A tooltip in a sentence
+
+Hover over <Tooltip text="Tooltip text set as a prop in MDX">this phrase</Tooltip> to see a tooltip.
+
+## A popup inside a blog post
+
+<button class="btn btn--primary" data-open-modal="mdx-popup">Open the popup</button>
+
+<Modal id="mdx-popup" title="Popup from MDX" image="/images/popup-offer.jpg" imageAlt="Popup banner">
+  This popup is declared inside an MDX file. Its **text** and _image_ should be editable.
+</Modal>
+
+## An FAQ inside a blog post
+
+<FaqAccordion
+  title="Questions about this post"
+  items={[
+    { question: 'Why use MDX?', answer: 'It lets writers drop components into long-form content.' },
+    { question: 'Is MDX harder to edit?', answer: 'That is exactly what this post is here to find out.' },
+  ]}
+/>
+
+## Inline image
+
+![Image in an MDX post](/images/gallery-2.jpg)
+
+That's the end of the MDX test post.

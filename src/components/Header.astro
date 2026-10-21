@@ -1,0 +1,48 @@
+---
+import site from '../data/site.json';
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a href="/" class="header__logo"><img src="/images/logo.svg" alt={site.name} width="120" height="32" /></a>
+    <button class="header__toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
+    <nav id="main-nav" class="header__nav">
+      {
+        site.nav.map((item) => (
+          <a href={item.href} aria-current={current === item.href ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+      <a href="/contact" class="btn btn--primary">Get started</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.header__toggle');
+  const nav = document.getElementById('main-nav');
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    nav?.classList.toggle('is-open', !open);
+  });
+</script>
+
+<style>
+  .header { border-bottom: 1px solid var(--border); background: #fff; position: sticky; top: 0; z-index: 20; }
+  .header__inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .header__nav { display: flex; align-items: center; gap: 24px; }
+  .header__nav a:not(.btn) { color: var(--text); text-decoration: none; font-weight: 500; }
+  .header__nav a[aria-current='page'] { color: var(--brand); }
+  .header__toggle { display: none; background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; }
+  @media (max-width: 860px) {
+    .header__toggle { display: block; }
+    .header__nav {
+      display: none; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column;
+      background: #fff; padding: 20px; border-bottom: 1px solid var(--border);
+    }
+    .header__nav.is-open { display: flex; }
+  }
+</style>

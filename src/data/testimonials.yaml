@@ -1,0 +1,15 @@
+- id: priya
+  quote: "We shipped our new landing page in an afternoon. Marketing didn't need a single ticket."
+  name: Priya Nair
+  role: Head of Marketing, Northwind
+  rating: 5
+- id: tom
+  quote: "The GitHub sync is the killer feature. Our devs still review every change."
+  name: Tom Becker
+  role: CTO, Brightlane
+  rating: 5
+- id: lena
+  quote: "Editing FAQs and pricing used to take a deploy. Now it takes thirty seconds."
+  name: Lena Ortiz
+  role: Product Marketing, Quill
+  rating: 4

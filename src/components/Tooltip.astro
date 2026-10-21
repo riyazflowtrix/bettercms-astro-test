@@ -1,0 +1,18 @@
+---
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+---
+
+<span class="tooltip" tabindex="0" data-tip={text}><slot /></span>
+
+<style>
+  .tooltip { position: relative; border-bottom: 1px dashed var(--brand); cursor: help; }
+  .tooltip::after {
+    content: attr(data-tip); position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%);
+    background: var(--text); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem;
+    white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s;
+  }
+  .tooltip:hover::after, .tooltip:focus::after { opacity: 1; }
+</style>

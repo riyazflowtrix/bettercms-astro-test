@@ -1,0 +1,22 @@
+---
+// Used inside MDX posts to test components embedded in rich text.
+interface Props {
+  type?: 'info' | 'warning' | 'success';
+  title?: string;
+}
+const { type = 'info', title } = Astro.props;
+const icons = { info: 'ℹ️', warning: '⚠️', success: '✅' };
+---
+
+<aside class={`callout callout--${type}`}>
+  <strong>{icons[type]} {title}</strong>
+  <div><slot /></div>
+</aside>
+
+<style>
+  .callout { border-radius: var(--radius); padding: 16px 20px; margin: 24px 0; border: 1px solid; }
+  .callout--info { background: #eef2ff; border-color: #c7d2fe; }
+  .callout--warning { background: #fffbeb; border-color: #fde68a; }
+  .callout--success { background: #ecfdf5; border-color: #a7f3d0; }
+  .callout :global(p) { margin: 6px 0 0; }
+</style>

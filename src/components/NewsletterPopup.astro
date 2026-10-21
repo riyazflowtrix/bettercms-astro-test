@@ -1,0 +1,39 @@
+---
+// Timed popup: appears 5 seconds after page load, once per browser session.
+import NewsletterForm from './NewsletterForm.astro';
+interface Props {
+  heading?: string;
+  body?: string;
+  delayMs?: number;
+}
+const {
+  heading = 'Get the Lumen newsletter',
+  body = 'One email a month with new templates, case studies and product updates. No spam.',
+  delayMs = 5000,
+} = Astro.props;
+---
+
+<dialog id="newsletter-popup" class="nl-popup" data-delay={delayMs}>
+  <button class="nl-popup__close" aria-label="Close newsletter popup">×</button>
+  <span class="eyebrow">Newsletter</span>
+  <h2>{heading}</h2>
+  <p>{body}</p>
+  <NewsletterForm />
+</dialog>
+
+<script>
+  const popup = document.getElementById('newsletter-popup') as HTMLDialogElement | null;
+  if (popup && !sessionStorage.getItem('nl-popup-seen')) {
+    setTimeout(() => {
+      popup.showModal();
+      sessionStorage.setItem('nl-popup-seen', '1');
+    }, Number(popup.dataset.delay));
+  }
+  popup?.querySelector('.nl-popup__close')?.addEventListener('click', () => popup.close());
+</script>
+
+<style>
+  .nl-popup { border: 0; border-radius: var(--radius); padding: 32px; width: min(460px, 92vw); text-align: center; }
+  .nl-popup::backdrop { background: rgba(15, 23, 42, 0.5); }
+  .nl-popup__close { position: absolute; top: 8px; right: 12px; border: 0; background: none; font-size: 1.5rem; cursor: pointer; }
+</style>

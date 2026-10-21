@@ -1,0 +1,39 @@
+---
+interface Props {
+  text?: string;
+}
+const {
+  text = 'We use cookies to understand how you use the site and to improve your experience.',
+} = Astro.props;
+---
+
+<div class="cookie" id="cookie-banner" role="region" aria-label="Cookie consent" hidden>
+  <p>{text} <a href="/privacy">Read our privacy policy</a>.</p>
+  <div class="cookie__actions">
+    <button class="btn btn--ghost" data-cookie="decline">Decline</button>
+    <button class="btn btn--primary" data-cookie="accept">Accept</button>
+  </div>
+</div>
+
+<script>
+  const banner = document.getElementById('cookie-banner');
+  if (banner && !localStorage.getItem('cookie-choice')) banner.hidden = false;
+  banner?.querySelectorAll<HTMLButtonElement>('[data-cookie]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      localStorage.setItem('cookie-choice', btn.dataset.cookie!);
+      banner.hidden = true;
+    })
+  );
+</script>
+
+<style>
+  .cookie {
+    position: fixed; bottom: 16px; left: 16px; right: 16px; max-width: 720px; margin: 0 auto; z-index: 50;
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px;
+    display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  }
+  .cookie[hidden] { display: none; }
+  .cookie p { margin: 0; flex: 1 1 300px; }
+  .cookie__actions { display: flex; gap: 8px; }
+</style>

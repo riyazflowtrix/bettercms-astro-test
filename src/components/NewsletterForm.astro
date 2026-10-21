@@ -1,0 +1,30 @@
+---
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<form class:list={['nl-form', { 'nl-form--compact': compact }]} action="#" method="post" data-newsletter>
+  <label for={compact ? 'nl-email-footer' : 'nl-email'} class="sr-only">Email address</label>
+  <input id={compact ? 'nl-email-footer' : 'nl-email'} type="email" name="email" placeholder="you@company.com" required />
+  <button type="submit" class="btn btn--primary">Subscribe</button>
+  <p class="nl-form__success" hidden>Thanks! Check your inbox to confirm.</p>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form[data-newsletter]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      form.querySelector<HTMLElement>('.nl-form__success')!.hidden = false;
+      form.reset();
+    });
+  });
+</script>
+
+<style>
+  .nl-form { display: grid; gap: 10px; }
+  .nl-form--compact .btn { justify-content: center; }
+  .nl-form__success { color: #10b981; margin: 0; font-weight: 600; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>

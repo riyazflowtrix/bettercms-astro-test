@@ -1,0 +1,36 @@
+---
+import site from '../data/site.json';
+import NewsletterForm from './NewsletterForm.astro';
+---
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div>
+      <img src="/images/logo.svg" alt={site.name} width="120" height="32" />
+      <p>{site.footer.about}</p>
+    </div>
+    <div>
+      <h4>Pages</h4>
+      <ul>{site.nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
+    </div>
+    <div>
+      <h4>Follow us</h4>
+      <ul>{site.footer.social.map((s) => <li><a href={s.href} target="_blank" rel="noopener">{s.label}</a></li>)}</ul>
+    </div>
+    <div>
+      <h4>Newsletter</h4>
+      <NewsletterForm compact />
+    </div>
+  </div>
+  <p class="container footer__copy">{site.footer.copyright}</p>
+</footer>
+
+<style>
+  .footer { background: #0f172a; color: #cbd5e1; padding: 56px 0 24px; }
+  .footer a { color: #e2e8f0; text-decoration: none; }
+  .footer h4 { color: #fff; }
+  .footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  .footer img { filter: invert(1) hue-rotate(180deg); margin-bottom: 12px; }
+  .footer__grid { display: grid; gap: 32px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .footer__copy { border-top: 1px solid #1e293b; margin-top: 40px; padding-top: 20px; font-size: 0.85rem; }
+</style>

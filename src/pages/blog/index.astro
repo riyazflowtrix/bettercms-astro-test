@@ -1,0 +1,62 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+---
+
+<BaseLayout title="Blog" description="Product updates, guides and stories from Lumen.">
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title">Blog</h1>
+      <p class="section-subtitle">Guides, updates and stories. Filter by tag:</p>
+      <div class="tags">
+        <button class="tag is-active" data-tag="all">All</button>
+        {tags.map((t) => <button class="tag" data-tag={t}>{t}</button>)}
+      </div>
+      <div class="grid grid--3">
+        {
+          posts.map((post) => (
+            <a href={`/blog/${post.id}`} class="card post" data-tags={post.data.tags.join(',')}>
+              <Image src={post.data.cover} alt={post.data.coverAlt} width={400} />
+              {post.data.featured && <span class="badge">Featured</span>}
+              <h2>{post.data.title}</h2>
+              <p>{post.data.description}</p>
+              <small>
+                {post.data.author} · {post.data.pubDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </small>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-tag]');
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag!;
+      buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
+      document.querySelectorAll<HTMLElement>('.post').forEach((post) => {
+        post.hidden = tag !== 'all' && !post.dataset.tags!.split(',').includes(tag);
+      });
+    })
+  );
+</script>
+
+<style>
+  .tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+  .tag { border: 1px solid var(--border); background: #fff; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+  .tag.is-active { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .post { text-decoration: none; color: inherit; position: relative; }
+  .post[hidden] { display: none; }
+  .post h2 { font-size: 1.25rem; }
+  .post small { color: var(--muted); }
+  .badge { position: absolute; top: 32px; left: 32px; background: var(--accent); color: #fff; font-size: 0.75rem; padding: 2px 10px; border-radius: 999px; }
+</style>

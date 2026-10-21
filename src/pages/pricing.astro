@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import Modal from '../components/Modal.astro';
+import Tooltip from '../components/Tooltip.astro';
+
+const plans = [
+  {
+    name: 'Starter',
+    monthly: 19,
+    yearly: 190,
+    description: 'For small sites and side projects.',
+    features: ['1 site', '2 editors', 'GitHub sync', 'Community support'],
+    cta: 'Start free trial',
+    highlighted: false,
+  },
+  {
+    name: 'Team',
+    monthly: 49,
+    yearly: 490,
+    description: 'For marketing teams shipping every week.',
+    features: ['5 sites', 'Unlimited editors', 'Staging previews', 'Scheduled publishing', 'Email support'],
+    cta: 'Start free trial',
+    highlighted: true,
+  },
+  {
+    name: 'Enterprise',
+    monthly: null,
+    yearly: null,
+    description: 'For large teams with custom workflows.',
+    features: ['Unlimited sites', 'SSO & audit logs', 'Custom roles', 'Dedicated success manager'],
+    cta: 'Talk to sales',
+    highlighted: false,
+  },
+];
+---
+
+<BaseLayout title="Pricing" description="Simple pricing for every team.">
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title">Simple, honest pricing</h1>
+      <p class="section-subtitle">
+        All prices in USD. <Tooltip text="Billed once a year, two months free">Yearly billing</Tooltip> saves 17%.
+      </p>
+
+      <div class="billing-toggle" role="group" aria-label="Billing period">
+        <button class="is-active" data-billing="monthly">Monthly</button>
+        <button data-billing="yearly">Yearly</button>
+      </div>
+
+      <div class="grid grid--3 plans">
+        {
+          plans.map((plan) => (
+            <article class:list={['card', 'plan', { 'plan--highlight': plan.highlighted }]}>
+              {plan.highlighted && <span class="plan__badge">Most popular</span>}
+              <h2>{plan.name}</h2>
+              <p class="plan__desc">{plan.description}</p>
+              <p class="plan__price">
+                {plan.monthly === null ? (
+                  'Custom'
+                ) : (
+                  <>
+                    <span data-price-monthly>${plan.monthly}</span>
+                    <span data-price-yearly hidden>${plan.yearly}</span>
+                    <small data-period>/month</small>
+                  </>
+                )}
+              </p>
+              <ul>{plan.features.map((f) => <li>✓ {f}</li>)}</ul>
+              {plan.monthly === null ? (
+                <button class="btn btn--ghost" data-open-modal="sales-popup">{plan.cta}</button>
+              ) : (
+                <a href="/contact" class="btn btn--primary">{plan.cta}</a>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2 class="section-title">Compare plans</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead><tr><th>Feature</th><th>Starter</th><th>Team</th><th>Enterprise</th></tr></thead>
+          <tbody>
+            <tr><td>Sites</td><td>1</td><td>5</td><td>Unlimited</td></tr>
+            <tr><td>Editors</td><td>2</td><td>Unlimited</td><td>Unlimited</td></tr>
+            <tr><td>Staging previews</td><td>—</td><td>✓</td><td>✓</td></tr>
+            <tr><td>SSO</td><td>—</td><td>—</td><td>✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <FaqAccordion title="Pricing questions" category="pricing" />
+    </div>
+  </section>
+
+  <Modal id="sales-popup" title="Talk to our sales team">
+    <p>Leave your email and we'll reply within one business day.</p>
+    <form class="sales-form" action="#" method="post">
+      <label for="sales-email">Work email</label>
+      <input id="sales-email" type="email" required placeholder="you@company.com" />
+      <label for="sales-size">Team size</label>
+      <select id="sales-size">
+        <option>1–10</option>
+        <option>11–50</option>
+        <option>51–200</option>
+        <option>200+</option>
+      </select>
+      <button class="btn btn--primary" type="submit">Request a call</button>
+    </form>
+  </Modal>
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-billing]');
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const yearly = btn.dataset.billing === 'yearly';
+      buttons.forEach((b) => b.classList.toggle('is-active', b === btn));
+      document.querySelectorAll<HTMLElement>('[data-price-monthly]').forEach((el) => (el.hidden = yearly));
+      document.querySelectorAll<HTMLElement>('[data-price-yearly]').forEach((el) => (el.hidden = !yearly));
+      document.querySelectorAll<HTMLElement>('[data-period]').forEach((el) => (el.textContent = yearly ? '/year' : '/month'));
+    })
+  );
+</script>
+
+<style>
+  .billing-toggle { display: flex; justify-content: center; gap: 4px; margin-bottom: 40px; }
+  .billing-toggle button { padding: 8px 20px; border: 1px solid var(--border); background: #fff; cursor: pointer; font-weight: 600; }
+  .billing-toggle button:first-child { border-radius: 999px 0 0 999px; }
+  .billing-toggle button:last-child { border-radius: 0 999px 999px 0; }
+  .billing-toggle .is-active { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .plan { position: relative; display: flex; flex-direction: column; }
+  .plan ul { list-style: none; padding: 0; flex: 1; }
+  .plan--highlight { border: 2px solid var(--brand); }
+  .plan__badge { position: absolute; top: -12px; right: 20px; background: var(--brand); color: #fff; padding: 2px 12px; border-radius: 999px; font-size: 0.8rem; }
+  .plan__price { font-size: 2.5rem; font-weight: 800; margin: 8px 0; }
+  .plan__price small { font-size: 1rem; color: var(--muted); }
+  .plan__desc { color: var(--muted); }
+  .table-wrap { overflow-x: auto; }
+  .compare { width: 100%; border-collapse: collapse; background: #fff; }
+  .compare th, .compare td { border: 1px solid var(--border); padding: 12px; text-align: center; }
+  .compare td:first-child, .compare th:first-child { text-align: left; }
+  .sales-form { display: grid; gap: 10px; }
+</style>

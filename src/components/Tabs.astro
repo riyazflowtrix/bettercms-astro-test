@@ -1,0 +1,61 @@
+---
+interface Tab {
+  label: string;
+  title: string;
+  body: string;
+  image?: string;
+}
+interface Props {
+  id: string;
+  tabs: Tab[];
+}
+const { id, tabs } = Astro.props;
+---
+
+<div class="tabs" data-tabs>
+  <div class="tabs__list" role="tablist">
+    {
+      tabs.map((tab, i) => (
+        <button role="tab" id={`${id}-tab-${i}`} aria-controls={`${id}-panel-${i}`} aria-selected={i === 0 ? 'true' : 'false'}>
+          {tab.label}
+        </button>
+      ))
+    }
+  </div>
+  {
+    tabs.map((tab, i) => (
+      <div role="tabpanel" id={`${id}-panel-${i}`} aria-labelledby={`${id}-tab-${i}`} hidden={i !== 0} class="tabs__panel">
+        <div>
+          <h3>{tab.title}</h3>
+          <p>{tab.body}</p>
+        </div>
+        {tab.image && <img src={tab.image} alt={tab.title} loading="lazy" />}
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((root) => {
+    const tabs = root.querySelectorAll<HTMLButtonElement>('[role="tab"]');
+    tabs.forEach((tab) =>
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => {
+          t.setAttribute('aria-selected', String(t === tab));
+          document.getElementById(t.getAttribute('aria-controls')!)!.hidden = t !== tab;
+        });
+      })
+    );
+  });
+</script>
+
+<style>
+  .tabs__list { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+  .tabs__list button {
+    padding: 10px 20px; border-radius: 999px; border: 1px solid var(--border); background: #fff; cursor: pointer; font-weight: 600;
+  }
+  .tabs__list button[aria-selected='true'] { background: var(--brand); color: #fff; border-color: var(--brand); }
+  .tabs__panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px; align-items: center; }
+  .tabs__panel[hidden] { display: none; }
+  .tabs__panel img { border-radius: var(--radius); }
+</style>

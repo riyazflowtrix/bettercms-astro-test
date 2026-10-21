@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Gallery from '../components/Gallery.astro';
+import Modal from '../components/Modal.astro';
+
+// Team members defined inline in the page to test editing arrays in frontmatter.
+const team = [
+  { name: 'Aisha Khan', role: 'Founder & CEO', photo: '/images/team-aisha.jpg', bio: 'Aisha spent ten years building marketing sites before starting Lumen.' },
+  { name: 'Ben Carter', role: 'Head of Engineering', photo: '/images/team-ben.jpg', bio: 'Ben leads the platform team and still reviews every pull request.' },
+  { name: 'Chen Wei', role: 'Design Lead', photo: '/images/team-chen.jpg', bio: 'Chen owns the design system and the component library.' },
+  { name: 'Diego Alvarez', role: 'Customer Success', photo: '/images/team-diego.jpg', bio: 'Diego helps new teams migrate and get their first page live.' },
+];
+
+const timeline = [
+  { year: '2022', text: 'Lumen founded in Bengaluru.' },
+  { year: '2023', text: 'First 20 customer sites launched.' },
+  { year: '2024', text: 'GitHub sync released.' },
+  { year: '2026', text: 'Moved every customer to Astro.' },
+];
+---
+
+<BaseLayout title="About us" description="The team behind Lumen Studio.">
+  <section class="section">
+    <div class="container prose">
+      <span class="eyebrow">About us</span>
+      <h1>We build websites people can edit</h1>
+      <p>
+        Lumen started with a simple frustration: <strong>marketing teams waited weeks</strong> for small text changes. We
+        wanted a workflow where developers own the components and editors own the words.
+      </p>
+      <p>
+        This paragraph is <em>hardcoded</em> in <code>about.astro</code>. It includes a <a href="https://astro.build" target="_blank" rel="noopener">link to Astro</a>,
+        a line<br />break, and an inline image below.
+      </p>
+      <img src="/images/inline-public.jpg" alt="Inline image inside about page text" />
+      <blockquote>“Good tools disappear. The team should only notice the work.” — Aisha Khan</blockquote>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2 class="section-title">Meet the team</h2>
+      <p class="section-subtitle">Click a card to read the full bio in a popup.</p>
+      <div class="grid grid--4">
+        {
+          team.map((m, i) => (
+            <button class="card team-card" data-open-modal={`bio-${i}`}>
+              <img src={m.photo} alt={m.name} width="400" height="400" />
+              <h3>{m.name}</h3>
+              <p>{m.role}</p>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  {
+    team.map((m, i) => (
+      <Modal id={`bio-${i}`} title={m.name} image={m.photo} imageAlt={m.name}>
+        <p><strong>{m.role}</strong></p>
+        <p>{m.bio}</p>
+      </Modal>
+    ))
+  }
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Our story</h2>
+      <ol class="timeline">
+        {timeline.map((t) => <li><strong>{t.year}</strong> {t.text}</li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <h2 class="section-title">Office gallery</h2>
+      <Gallery
+        images={[
+          { src: '/images/gallery-1.jpg', alt: 'Office one', caption: 'Our Bengaluru studio' },
+          { src: '/images/gallery-2.jpg', alt: 'Office two', caption: 'Team offsite, 2025' },
+          { src: '/images/gallery-3.jpg', alt: 'Office three', caption: 'Launch day' },
+        ]}
+      />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .team-card { text-align: center; cursor: pointer; font: inherit; }
+  .team-card img { border-radius: 50%; width: 140px; margin: 0 auto 16px; }
+  .team-card p { color: var(--muted); margin: 0; }
+  .timeline { max-width: 600px; margin: 0 auto; display: grid; gap: 12px; }
+</style>

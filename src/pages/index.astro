@@ -1,0 +1,173 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Modal from '../components/Modal.astro';
+import NewsletterPopup from '../components/NewsletterPopup.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import Tabs from '../components/Tabs.astro';
+import Tooltip from '../components/Tooltip.astro';
+import site from '../data/site.json';
+import hero from '../assets/hero.jpg';
+import featureEditor from '../assets/feature-editor.png';
+import featureSync from '../assets/feature-sync.png';
+import featureSeo from '../assets/feature-seo.png';
+
+const featureImages = { 'feature-editor': featureEditor, 'feature-sync': featureSync, 'feature-seo': featureSeo };
+
+const testimonials = await getCollection('testimonials');
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+// Text hardcoded in the page (not in a data file) to test inline editing of .astro markup.
+const howItWorks = [
+  { label: 'Import', title: 'Connect your repo', body: 'Point BetterCMS at a GitHub repository and it detects your Astro pages.', image: '/images/gallery-1.jpg' },
+  { label: 'Edit', title: 'Edit visually', body: 'Change text, swap images and reorder sections without touching code.', image: '/images/gallery-2.jpg' },
+  { label: 'Publish', title: 'Publish to GitHub', body: 'Each publish creates a commit, and your host rebuilds the site.', image: '/images/gallery-3.jpg' },
+];
+---
+
+<BaseLayout title="Home" description={site.tagline}>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero__inner">
+      <div>
+        <span class="eyebrow">{site.hero.eyebrow}</span>
+        <h1>{site.hero.title}</h1>
+        <p class="hero__subtitle">{site.hero.subtitle}</p>
+        <div class="hero__ctas">
+          <a href={site.hero.primaryCta.href} class="btn btn--primary">{site.hero.primaryCta.label}</a>
+          <button class="btn btn--ghost" data-open-modal="demo-popup">▶ {site.hero.secondaryCta.label}</button>
+        </div>
+      </div>
+      <Image src={hero} alt="Lumen editor screenshot placeholder" widths={[640, 1200]} sizes="(max-width: 860px) 100vw, 560px" loading="eager" />
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="section section--alt">
+    <div class="container grid grid--4 stats">
+      {site.stats.map((s) => <div><strong>{s.value}</strong><span>{s.label}</span></div>)}
+    </div>
+  </section>
+
+  <!-- Features (from site.json, images via astro:assets) -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Everything your team needs</h2>
+      <p class="section-subtitle">
+        Hardcoded subtitle with <strong>bold</strong>, <em>italic</em>, a <a href="/about">link</a>, and a
+        <Tooltip text="This is tooltip text">tooltip</Tooltip>.
+      </p>
+      <div class="grid grid--3">
+        {
+          site.features.map((f) => (
+            <article class="card">
+              <Image src={featureImages[f.image as keyof typeof featureImages]} alt={f.title} width={400} />
+              <h3>{f.icon} {f.title}</h3>
+              <p>{f.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <section class="section section--alt">
+    <div class="container">
+      <h2 class="section-title">How it works</h2>
+      <p class="section-subtitle">Three steps from repository to live site.</p>
+      <Tabs id="how" tabs={howItWorks} />
+    </div>
+  </section>
+
+  <!-- Testimonials (YAML collection) -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Loved by marketing teams</h2>
+      <div class="grid grid--3">
+        {
+          testimonials.map(({ data }) => (
+            <blockquote class="card testimonial">
+              <div class="stars" aria-label={`${data.rating} out of 5`}>{'★'.repeat(data.rating)}{'☆'.repeat(5 - data.rating)}</div>
+              <p>“{data.quote}”</p>
+              <footer><strong>{data.name}</strong><br /><small>{data.role}</small></footer>
+            </blockquote>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest posts -->
+  <section class="section section--alt">
+    <div class="container">
+      <h2 class="section-title">From the blog</h2>
+      <div class="grid grid--3">
+        {
+          posts.map((post) => (
+            <a href={`/blog/${post.id}`} class="card post-card">
+              <Image src={post.data.cover} alt={post.data.coverAlt} width={400} />
+              <h3>{post.data.title}</h3>
+              <p>{post.data.description}</p>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ (general category) -->
+  <section class="section">
+    <div class="container">
+      <FaqAccordion category="general" />
+      <p style="text-align:center"><a href="/faq">See all FAQs →</a></p>
+    </div>
+  </section>
+
+  <!-- CTA band with a popup offer -->
+  <section class="section cta">
+    <div class="container">
+      <h2>Ready to give your marketing team the keys?</h2>
+      <p>Start a free 14-day trial. No credit card required.</p>
+      <button class="btn btn--primary" data-open-modal="offer-popup">Claim launch offer</button>
+    </div>
+  </section>
+
+  <!-- Popups -->
+  <Modal id="demo-popup" title="Product demo">
+    <p>This popup would normally hold a video. It tests <strong>editable text inside a modal</strong> that is hidden until opened.</p>
+    <div class="video-placeholder">▶ 2:14 demo video placeholder</div>
+  </Modal>
+
+  <Modal id="offer-popup" title="Spring launch offer: 20% off" image="/images/popup-offer.jpg" imageAlt="Launch offer banner">
+    <p>Use code <code>SPRING20</code> at checkout. Offer ends <strong>31 May 2026</strong>.</p>
+    <ul>
+      <li>Unlimited editors</li>
+      <li>GitHub sync on every plan</li>
+      <li>Priority support</li>
+    </ul>
+    <a href="/pricing" class="btn btn--primary">See pricing</a>
+  </Modal>
+
+  <NewsletterPopup />
+</BaseLayout>
+
+<style>
+  .hero { padding: 80px 0; background: linear-gradient(180deg, #eef2ff, #fff); }
+  .hero__inner { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: center; }
+  .hero h1 { font-size: clamp(2.25rem, 5vw, 3.5rem); }
+  .hero__subtitle { font-size: 1.2rem; color: var(--muted); }
+  .hero__ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+  .hero :global(img) { border-radius: var(--radius); box-shadow: 0 20px 50px rgba(79, 70, 229, 0.25); }
+  .stats { text-align: center; }
+  .stats strong { display: block; font-size: 2rem; color: var(--brand); }
+  .stats span { color: var(--muted); }
+  .testimonial { margin: 0; }
+  .stars { color: #f59e0b; letter-spacing: 2px; }
+  .post-card { text-decoration: none; color: inherit; }
+  .cta { background: var(--brand); color: #fff; text-align: center; }
+  .video-placeholder { background: #0f172a; color: #fff; border-radius: 8px; padding: 60px; text-align: center; }
+</style>

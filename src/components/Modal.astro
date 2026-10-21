@@ -1,0 +1,50 @@
+---
+// Reusable popup built on the native <dialog> element.
+// Open it from anywhere with a button that has data-open-modal="<id>".
+interface Props {
+  id: string;
+  title: string;
+  image?: string;
+  imageAlt?: string;
+}
+const { id, title, image, imageAlt = '' } = Astro.props;
+---
+
+<dialog id={id} class="modal" aria-labelledby={`${id}-title`}>
+  <button class="modal__close" aria-label="Close popup" data-close-modal>×</button>
+  {image && <img src={image} alt={imageAlt} class="modal__image" />}
+  <div class="modal__body">
+    <h2 id={`${id}-title`}>{title}</h2>
+    <slot />
+  </div>
+</dialog>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-open-modal]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const dialog = document.getElementById(btn.dataset.openModal!) as HTMLDialogElement | null;
+      dialog?.showModal();
+    });
+  });
+  document.querySelectorAll<HTMLDialogElement>('dialog.modal').forEach((dialog) => {
+    dialog.querySelector('[data-close-modal]')?.addEventListener('click', () => dialog.close());
+    // Close when clicking the backdrop.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  });
+</script>
+
+<style>
+  .modal {
+    border: 0; border-radius: var(--radius); padding: 0; width: min(560px, 92vw);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+  .modal::backdrop { background: rgba(15, 23, 42, 0.6); }
+  .modal__image { width: 100%; aspect-ratio: 2 / 1; object-fit: cover; }
+  .modal__body { padding: 28px; }
+  .modal__close {
+    position: absolute; top: 10px; right: 12px; width: 36px; height: 36px; border-radius: 50%;
+    border: 0; background: rgba(255, 255, 255, 0.9); font-size: 1.4rem; cursor: pointer;
+  }
+</style>

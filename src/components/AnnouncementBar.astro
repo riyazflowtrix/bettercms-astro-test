@@ -1,0 +1,34 @@
+---
+import site from '../data/site.json';
+const { announcement } = site;
+---
+
+{
+  announcement.enabled && (
+    <div class="announcement" id="announcement">
+      <p>
+        {announcement.text} <a href={announcement.href}>{announcement.linkText} →</a>
+      </p>
+      <button class="announcement__close" aria-label="Dismiss announcement" data-dismiss>
+        ×
+      </button>
+    </div>
+  )
+}
+
+<script>
+  const bar = document.getElementById('announcement');
+  bar?.querySelector('[data-dismiss]')?.addEventListener('click', () => bar.remove());
+</script>
+
+<style>
+  .announcement {
+    display: flex; justify-content: center; align-items: center; gap: 12px;
+    background: var(--text); color: #fff; padding: 10px 48px; font-size: 0.9rem; position: relative;
+  }
+  .announcement p { margin: 0; }
+  .announcement a { color: #c7d2fe; font-weight: 600; }
+  .announcement__close {
+    position: absolute; right: 16px; background: none; border: 0; color: #fff; font-size: 1.4rem; cursor: pointer;
+  }
+</style>

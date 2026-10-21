@@ -1,0 +1,62 @@
+---
+// FAQ accordion. Items come from the `faqs` collection (src/data/faqs.json)
+// or can be passed in directly as props for page-specific FAQs.
+import { getCollection } from 'astro:content';
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+interface Props {
+  title?: string;
+  category?: 'general' | 'pricing' | 'technical';
+  items?: FaqItem[];
+}
+
+const { title = 'Frequently asked questions', category, items } = Astro.props;
+
+let faqs: FaqItem[];
+if (items) {
+  faqs = items;
+} else {
+  const entries = await getCollection('faqs', ({ data }) => !category || data.category === category);
+  faqs = entries.sort((a, b) => a.data.order - b.data.order).map((e) => e.data);
+}
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+---
+
+<section class="faq">
+  {title && <h2 class="section-title">{title}</h2>}
+  <div class="faq__list">
+    {
+      faqs.map((faq, i) => (
+        <details class="faq__item" open={i === 0}>
+          <summary>{faq.question}</summary>
+          <div class="faq__answer" set:html={faq.answer} />
+        </details>
+      ))
+    }
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+</section>
+
+<style>
+  .faq__list { max-width: 760px; margin: 32px auto 0; display: grid; gap: 12px; }
+  .faq__item { border: 1px solid var(--border); border-radius: var(--radius); background: #fff; }
+  .faq__item summary {
+    padding: 18px 22px; font-weight: 600; cursor: pointer; list-style: none;
+    display: flex; justify-content: space-between; gap: 16px;
+  }
+  .faq__item summary::after { content: '+'; font-size: 1.3rem; color: var(--brand); }
+  .faq__item[open] summary::after { content: '−'; }
+  .faq__answer { padding: 0 22px 18px; color: var(--muted); }
+</style>

@@ -1,0 +1,10 @@
+[
+  { "id": "what-is-lumen", "question": "What is Lumen Studio?", "answer": "Lumen is a <strong>dummy website</strong> built to test every kind of editable field in BetterCMS.", "category": "general", "order": 1 },
+  { "id": "who-can-edit", "question": "Who can edit the content?", "answer": "Anyone on your team with an editor role. Developers keep control of layout and components.", "category": "general", "order": 2 },
+  { "id": "can-i-cancel", "question": "Can I cancel anytime?", "answer": "Yes. Plans are month to month and you can cancel from the billing page.", "category": "pricing", "order": 3 },
+  { "id": "free-trial", "question": "Is there a free trial?", "answer": "Every plan includes a <em>14-day free trial</em>. No credit card required.", "category": "pricing", "order": 4 },
+  { "id": "discount", "question": "Do you offer discounts for non-profits?", "answer": "We offer 50% off for registered non-profits. <a href=\"/contact\">Contact us</a> to apply.", "category": "pricing", "order": 5 },
+  { "id": "frameworks", "question": "Which frameworks are supported?", "answer": "Astro and Next.js today. More frameworks are on the roadmap.", "category": "technical", "order": 6 },
+  { "id": "self-host", "question": "Can I host the site myself?", "answer": "Yes. The site is a normal Astro project, so you can deploy it to Vercel, Netlify, Cloudflare or your own server.", "category": "technical", "order": 7 },
+  { "id": "special-chars", "question": "Does it handle special characters like é, ü, 中文, عربى and emoji 🚀?", "answer": "It should. This entry exists to test unicode, RTL text and emoji in FAQ fields.", "category": "technical", "order": 8 }
+]
